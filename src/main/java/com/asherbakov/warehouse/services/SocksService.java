@@ -2,19 +2,17 @@ package com.asherbakov.warehouse.services;
 
 import com.asherbakov.warehouse.models.Socks;
 import com.asherbakov.warehouse.models.enums.Color;
+import com.asherbakov.warehouse.models.enums.OperationType;
 import com.asherbakov.warehouse.models.enums.Size;
 
 public interface SocksService {
 
-    int socksCountOfColor(Color color);
+    String getAllSocks();
 
-    int socksCountOfSize(Size size);
-
-    int socksCountOfColorAndQuantity(Color color, int quantity);
+    int getSocksCount(Color color, Size size, int cottonMin, int cottonMax);
 
     void addSocks(Socks socks);
 
-    boolean takeOutSocks(Socks socks, int count);
+    boolean takeOutSocks(Socks socks, OperationType type);
 
-    boolean takeOutSocks(Long id, int count);
 }

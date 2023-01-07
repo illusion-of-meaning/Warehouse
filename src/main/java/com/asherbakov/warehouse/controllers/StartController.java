@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Tag(name = "Основной контроллер")
+@Tag(name = "Стартовый контроллер")
 public class StartController {
     @Operation(summary = "Стратовая страница")
     @GetMapping("/")
