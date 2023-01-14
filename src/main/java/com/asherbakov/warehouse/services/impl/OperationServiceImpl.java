@@ -3,13 +3,13 @@ package com.asherbakov.warehouse.services.impl;
 import com.asherbakov.warehouse.models.Operation;
 import com.asherbakov.warehouse.services.FileService;
 import com.asherbakov.warehouse.services.OperationService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class OperationServiceImpl implements OperationService {
         try {
             String json = new ObjectMapper().writeValueAsString(operationList);
             fileService.writeFile(operationsDataFilePath, json);
-        } catch (JsonProcessingException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -57,9 +57,9 @@ public class OperationServiceImpl implements OperationService {
     private void loadDataFromFile() {
         try {
             String json = fileService.readFile(operationsDataFilePath);
-            operationList = new ObjectMapper().readValue(json, new TypeReference<List<Operation>>() {
+            operationList = new ObjectMapper().readValue(json, new TypeReference<>() {
             });
-        } catch (JsonProcessingException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

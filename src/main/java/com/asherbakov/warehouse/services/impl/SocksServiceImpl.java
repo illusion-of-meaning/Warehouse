@@ -8,13 +8,13 @@ import com.asherbakov.warehouse.models.enums.Size;
 import com.asherbakov.warehouse.services.FileService;
 import com.asherbakov.warehouse.services.OperationService;
 import com.asherbakov.warehouse.services.SocksService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -28,10 +28,12 @@ public class SocksServiceImpl implements SocksService {
     Path socksDataFilePath;
     private final FileService fileService;
     private final OperationService operationService;
+
     public SocksServiceImpl(FileService fileService, OperationService operationService) {
         this.fileService = fileService;
         this.operationService = operationService;
     }
+
     private static Long id = 0L;
     public static Map<Long, Socks> socksMap = new HashMap<>();
 
@@ -63,7 +65,7 @@ public class SocksServiceImpl implements SocksService {
     }
 
     @Override
-    public void addSocks(Socks socks) {
+    public void addSocks(Socks socks) throws IOException {
         if (!socksMap.containsValue(socks)) {
             socksMap.put(id++, socks);
         } else {
@@ -76,7 +78,7 @@ public class SocksServiceImpl implements SocksService {
     }
 
     @Override
-    public boolean takeOutSocks(Socks socks, OperationType type) {
+    public boolean takeOutSocks(Socks socks, OperationType type) throws IOException {
         if (socksMap.containsValue(socks)) {
             Long tempId = getId(socks);
             if (changeQuantitySocks(tempId, socks, type)) {
@@ -117,21 +119,17 @@ public class SocksServiceImpl implements SocksService {
     private void loadDataFromFile() {
         try {
             String json = fileService.readFile(socksDataFilePath);
-            socksMap = new ObjectMapper().readValue(json, new TypeReference<Map<Long, Socks>>() {
+            socksMap = new ObjectMapper().readValue(json, new TypeReference<>() {
             });
             id = (long) socksMap.size();
-        } catch (JsonProcessingException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void saveDataToFile() {
-        try {
-            String json = new ObjectMapper().writeValueAsString(socksMap);
-            fileService.writeFile(socksDataFilePath, json);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+    private void saveDataToFile() throws IOException {
+        String json = new ObjectMapper().writeValueAsString(socksMap);
+        fileService.writeFile(socksDataFilePath, json);
     }
 
     private String getDateTimeString() {

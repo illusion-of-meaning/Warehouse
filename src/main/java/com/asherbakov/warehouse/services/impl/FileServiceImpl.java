@@ -11,27 +11,16 @@ import java.nio.file.Path;
 @Service
 public class FileServiceImpl implements FileService {
     @Override
-    public String readFile(Path path) {
-        String result = "{}";
-        try {
-            if (!Files.exists(path)) {
-                cleanJsonFile(path);
-            }
-            result = Files.readString(path);
-        } catch (IOException e) {
-            e.printStackTrace();
+    public String readFile(Path path) throws IOException {
+        if (!Files.exists(path)) {
+            cleanJsonFile(path);
         }
-        return result;
+        return Files.readString(path);
     }
 
     @Override
-    public boolean writeFile(Path path, String str) {
-        try {
-            Files.writeString(path, str);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
+    public boolean writeFile(Path path, String str) throws IOException {
+        Files.writeString(path, str);
         return true;
     }
 
